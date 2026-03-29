@@ -1,0 +1,27 @@
+{
+  "name": "test-tg-bot",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "start": "ts-node index.ts",
+    "dev": "nodemon --watch 'src/**/*.ts' --watch 'index.ts' --exec \"ts-node index.ts\"",
+    "update-types": "npx supabase gen types typescript --project-id qeouqrlcedxefelscbku > src/types/database.types.ts"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@supabase/supabase-js": "^2.100.0",
+    "dayjs": "^1.11.20",
+    "dotenv": "^17.3.1",
+    "env": "^0.0.2",
+    "grammy": "^1.41.1"
+  },
+  "devDependencies": {
+    "@types/node": "^25.5.0",
+    "nodemon": "^3.1.14",
+    "ts-node": "^10.9.2",
+    "typescript": "^5.9.3"
+  }
+}

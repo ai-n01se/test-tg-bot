@@ -1,0 +1,28 @@
+# Залежності (папка з бібліотеками, важить багато)
+node_modules/
+dist/
+build/
+
+# Секретні дані (ТОКЕНИ ТА КЛЮЧІ - ЦЕ НАЙВАЖЛИВІШЕ)
+.env
+.env.local
+.env.*.local
+
+# Логи (файли з помилками)
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+logs/
+*.log
+
+# Операційна система (сміття від Windows/Mac)
+.DS_Store
+Thumbs.db
+
+# Налаштування редакторів (за бажанням)
+.vscode/
+.idea/
+
+# Тимчасові файли
+tmp/
+temp/
