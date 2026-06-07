@@ -16,7 +16,8 @@
     "dayjs": "^1.11.20",
     "dotenv": "^17.3.1",
     "env": "^0.0.2",
-    "grammy": "^1.41.1"
+    "grammy": "^1.41.1",
+    "supabase": "^2.101.0"
   },
   "devDependencies": {
     "@types/node": "^25.5.0",

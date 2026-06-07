@@ -1,39 +1,41 @@
-import { UserInsert } from '../types/user.types';
-import * as mod from 'grammy';
-import { syncUser } from '../utils/user/syncUser';
-import { welcomeMessages } from './../../messages/welcomeMessages';
+import * as mod from "grammy";
+import firstRegister from "../utils/register/firstRegister";
+import findTeacher from "../utils/findTeacher";
 
 export const commandStart = async (ctx: mod.Context) => {
-  if (!ctx.from) return;
+	const payload = typeof ctx.match === "string" ? ctx.match : "";
+	console.log("START PAYLOAD:", payload);
 
-  const user: UserInsert = {
-    telegram_id: ctx.from.id,
-    username_tg: ctx.from.username || null,
-    firstName_tg: ctx.from.first_name || null,
-    lastName_tg: ctx.from.last_name || null,
-    bot_id: Number(process.env.BOT_ID) || null,
-  };
+	try {
+		const user = await firstRegister(ctx);
+		console.log(user);
+		if (!user) {
+			await ctx.reply("Проблема з реєстрацією");
+			return;
+		}
 
-  try {
-    const userDB = await syncUser(user);
-    if (!userDB) {
-      await ctx.reply('Вибачте, сталася помилка при реєстрації.');
-      return;
-    }
-    console.log(
-      `Користувач: ${userDB.username_tg} (ID: ${userDB.telegram_id}) успішно синхронізований з базою даних. ${userDB.created_at ? `Створено: ${userDB.created_at}` : ''}`,
-    );
+		if (!payload.startsWith("teacher_")) {
+			console.log("Source unknown");
+			return;
+		}
 
-    const newFullName = [userDB.firstName_tg, userDB.lastName_tg]
-      .filter(Boolean)
-      .join(' ');
+		const teacherId = Number(payload.replace("teacher_", ""));
+		console.log("User came from teacher:", teacherId);
 
-    await ctx.reply(
-      welcomeMessages(newFullName, userDB.role || 'не визначено'),
-      { parse_mode: 'Markdown' },
-    );
-  } catch (error) {
-    console.error('Помилка в commandStart:', error);
-    await ctx.reply('Вибачте, сталася помилка при реєстрації.');
-  }
+		if (Number.isNaN(teacherId)) {
+			await ctx.reply("Некоректний ID викладача");
+			return;
+		}
+
+		const { data: teacher, error } = await findTeacher({ id: teacherId });
+		console.log(teacher);
+
+		if (error || !teacher) {
+			await ctx.reply("Проблема з знаходженням викладача");
+			return;
+		}
+	} catch (error) {
+		console.error("Start command error:", error);
+		await ctx.reply("Сталася помилка. Спробуйте пізніше");
+	}
 };
