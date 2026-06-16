@@ -1,36 +1,38 @@
 import * as mod from "grammy";
-import firstRegister from "../utils/register/firstRegister";
-import findTeacher from "../utils/findTeacher";
+import getStudentTeachersByTelegramId from "../services/student/getStudentTeachersByTelegramId";
+import getTeacherById from "../services/teacher";
+import syncTelegramUser from "../utils/register/syncTelegramUser";
+import getTeacherIdFromStartPayload from "../utils/start/getTeacherIdFromStartPayload";
+import sendStudentTeachersListMessage from "../utils/start/sendStudentTeachersListMessage";
+import sendTeacherLinkRequiredMessage from "../utils/start/sendTeacherLinkRequiredMessage";
 
 export const commandStart = async (ctx: mod.Context) => {
 	const payload = typeof ctx.match === "string" ? ctx.match : "";
-	console.log("START PAYLOAD:", payload);
 
 	try {
-		const user = await firstRegister(ctx);
-		console.log(user);
+		const user = await syncTelegramUser(ctx);
 		if (!user) {
 			await ctx.reply("Проблема з реєстрацією");
 			return;
 		}
 
-		if (!payload.startsWith("teacher_")) {
-			console.log("Source unknown");
+		const teacherId = getTeacherIdFromStartPayload(payload);
+		if (teacherId === null) {
+			const teachers = await getStudentTeachersByTelegramId({
+				telegramId: user.telegram_id,
+			});
+
+			if (teachers.length > 0) {
+				await sendStudentTeachersListMessage(ctx, teachers);
+				return;
+			}
+
+			await sendTeacherLinkRequiredMessage(ctx);
 			return;
 		}
 
-		const teacherId = Number(payload.replace("teacher_", ""));
-		console.log("User came from teacher:", teacherId);
-
-		if (Number.isNaN(teacherId)) {
-			await ctx.reply("Некоректний ID викладача");
-			return;
-		}
-
-		const { data: teacher, error } = await findTeacher({ id: teacherId });
-		console.log(teacher);
-
-		if (error || !teacher) {
+		const teacher = await getTeacherById({ id: teacherId });
+		if (!teacher) {
 			await ctx.reply("Проблема з знаходженням викладача");
 			return;
 		}

@@ -2,7 +2,7 @@ import { Context } from "grammy";
 import { UserInsert } from "../../types/user.types";
 import { supabase } from "../../lib/supabaseClient";
 
-const firstRegister = async (ctx: Context) => {
+const syncTelegramUser = async (ctx: Context) => {
 	if (!ctx.from) {
 		throw new Error("Telegram user not found in context");
 	}
@@ -28,4 +28,4 @@ const firstRegister = async (ctx: Context) => {
 	return result.data;
 };
 
-export default firstRegister;
+export default syncTelegramUser;
