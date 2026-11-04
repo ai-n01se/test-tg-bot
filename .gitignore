@@ -28,3 +28,4 @@ tmp/
 temp/
 
 supabase/.temp/
+src/types/database.types.tmp
