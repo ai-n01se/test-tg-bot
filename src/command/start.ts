@@ -9,7 +9,7 @@ import sendTeacherLinkRequiredMessage from "../utils/start/sendTeacherLinkRequir
 export const commandStart = async (ctx: mod.Context) => {
 	const payload = typeof ctx.match === "string" ? ctx.match : "";
 
-  try {
+	try {
 		const user = await syncTelegramUser(ctx);
 		if (!user) {
 			await ctx.reply("Проблема з реєстрацією");
@@ -17,10 +17,10 @@ export const commandStart = async (ctx: mod.Context) => {
 		}
 
 		const teacherId = getTeacherIdFromStartPayload(payload);
-    if (teacherId === null) {
+		if (teacherId === null) {
 			const teachers = await getStudentTeachersByTelegramId({
 				telegramId: user.telegram_id,
-      });
+			});
 
 			if (teachers.length > 0) {
 				await sendStudentTeachersListMessage(ctx, teachers);
@@ -35,7 +35,7 @@ export const commandStart = async (ctx: mod.Context) => {
 		if (!teacher) {
 			await ctx.reply("Проблема з знаходженням викладача");
 			return;
-    }
+		}
 	} catch (error) {
 		console.error("Start command error:", error);
 		await ctx.reply("Сталася помилка. Спробуйте пізніше");

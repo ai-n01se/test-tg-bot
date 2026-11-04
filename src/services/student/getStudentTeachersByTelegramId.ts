@@ -11,7 +11,9 @@ const getStudentTeachersByTelegramId = async ({
 		return [];
 	}
 
-	const teacherIds = [...new Set(student.studentRelations.map((item) => item.teacher_id))];
+	const teacherIds = [
+		...new Set(student.studentRelations.map((item) => item.teacher_id)),
+	];
 
 	const { data: teachers, error } = await supabase
 		.from("TEACHER_PROFILES")
