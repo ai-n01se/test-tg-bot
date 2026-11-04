@@ -26,3 +26,5 @@ Thumbs.db
 # Тимчасові файли
 tmp/
 temp/
+
+supabase/.temp/
