@@ -11,3 +11,6 @@ export type StudentTeacherRelation = Tables<"STUDENT_TEACHER_RELATIONS">;
 export type FindStudentByTelegramId = {
 	telegramId: User["telegram_id"];
 };
+
+export type TeacherInsert =
+	Database["public"]["Tables"]["TEACHER_PROFILES"]["Insert"];

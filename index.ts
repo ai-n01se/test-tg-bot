@@ -7,11 +7,18 @@ import { commandSchedule } from "./src/command/schedule";
 import { commandTeachers } from "./src/command/teachers";
 import getTeacherById from "./src/services/teacher";
 import { getNextAndPrevMonth } from "./src/utils/calendar/nextAndPrevMonth";
+import { conversations, createConversation } from "@grammyjs/conversations";
+import becomeTeacher from "./src/conversations/becomeTeacher";
+import { commandLink } from "./src/command/link";
+
+bot.use(conversations());
+bot.use(createConversation(becomeTeacher, "becomeTeacher"));
 
 // Команди бота
 bot.command("start", commandStart);
 bot.command("schedule", commandSchedule);
 bot.command("teachers", commandTeachers);
+bot.command("link", commandLink);
 
 // Обробка вибору дати
 bot.callbackQuery(/^cal:/, async (ctx) => {
@@ -52,9 +59,8 @@ bot.callbackQuery(/^teacher:/, async (ctx) => {
 });
 
 bot.callbackQuery("become_teacher", async (ctx) => {
-	await ctx.answerCallbackQuery({
-		text: "Функція для вчителів ще в розробці",
-	});
+	await ctx.answerCallbackQuery();
+	await ctx.conversation.enter("becomeTeacher");
 });
 
 bot.catch((err) => console.error("Error in bot:", err));
