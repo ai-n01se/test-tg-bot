@@ -1,7 +1,9 @@
 import { supabase } from "../../lib/supabaseClient";
 import { FindStudentByTelegramId } from "../../types/user.types";
 
-const getStudentByTelegramId = async ({ telegramId }: FindStudentByTelegramId) => {
+const getStudentByTelegramId = async ({
+	telegramId,
+}: FindStudentByTelegramId) => {
 	const { data: profile, error: profileError } = await supabase
 		.from("PROFILES")
 		.select("*")
