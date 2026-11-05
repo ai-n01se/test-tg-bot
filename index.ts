@@ -10,6 +10,13 @@ import { getNextAndPrevMonth } from "./src/utils/calendar/nextAndPrevMonth";
 import { conversations, createConversation } from "@grammyjs/conversations";
 import becomeTeacher from "./src/conversations/becomeTeacher";
 import { commandLink } from "./src/command/link";
+import {
+	handleBackToCalendar,
+	handleBusySlot,
+	handleDatePick,
+	handleIgnore,
+	handleSlotToggle,
+} from "./src/handlers/teacher/schedule";
 
 bot.use(conversations());
 bot.use(createConversation(becomeTeacher, "becomeTeacher"));
@@ -20,20 +27,22 @@ bot.command("schedule", commandSchedule);
 bot.command("teachers", commandTeachers);
 bot.command("link", commandLink);
 
-// Обробка вибору дати
-bot.callbackQuery(/^cal:/, async (ctx) => {
-	await ctx.answerCallbackQuery();
-	const selectedDate = ctx.callbackQuery.data.split(":")[1];
-	await ctx.reply(`Ви обрали дату: ${selectedDate}. Тепер оберіть час:`);
-});
+// Розклад вчителя
+bot.callbackQuery(/^cal:/, handleDatePick);
+bot.callbackQuery(/^slot:/, handleSlotToggle);
+bot.callbackQuery(/^sched_back:/, handleBackToCalendar);
+bot.callbackQuery("slot_busy", handleBusySlot);
+bot.callbackQuery("ignore", handleIgnore);
 
-// Навігація
+// Навігація календаря
 bot.callbackQuery(/^next_month:/, async (ctx) => {
+	await ctx.answerCallbackQuery();
 	const currentDate = ctx.callbackQuery.data.split(":")[1];
 	await getNextAndPrevMonth(ctx, "next", currentDate);
 });
 
 bot.callbackQuery(/^prev_month:/, async (ctx) => {
+	await ctx.answerCallbackQuery();
 	const currentDate = ctx.callbackQuery.data.split(":")[1];
 	await getNextAndPrevMonth(ctx, "prev", currentDate);
 });

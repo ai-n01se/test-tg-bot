@@ -1,11 +1,23 @@
 import { Context } from "grammy";
-import dayjs from "dayjs";
+import dayjs from "../lib/dayjs";
 import { generateCalendar } from "../utils/calendar/calendarGenerator";
+import getCurrentTeacher from "../utils/teacher/getCurrentTeacher";
 
 export const commandSchedule = async (ctx: Context) => {
-	// За замовчуванням показуємо поточний місяць
-	const now = dayjs().format("YYYY-MM-DD");
-	await ctx.reply("Оберіть дату для налаштування уроків:", {
-		reply_markup: generateCalendar(now),
-	});
+	try {
+		const teacher = await getCurrentTeacher(ctx);
+		if (!teacher) {
+			await ctx.reply(
+				"Розклад доступний лише вчителям. Надішліть /start і натисніть «Стати вчителем».",
+			);
+			return;
+		}
+
+		await ctx.reply("Оберіть дату, щоб відкрити години для учнів:", {
+			reply_markup: generateCalendar(dayjs().format("YYYY-MM-DD")),
+		});
+	} catch (error) {
+		console.error("Schedule command error:", error);
+		await ctx.reply("Сталася помилка. Спробуйте пізніше");
+	}
 };
